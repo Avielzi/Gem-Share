@@ -1,0 +1,6 @@
+{
+  "name": "Gem Share",
+  "description": "A client-side only web application for a close group of friends to create, run, and share personalized AI agents (Gems) powered by the Gemini API. The app operates locally in the browser, requires no server, and uses IndexedDB for all data persistence.",
+  "version": "1.4.0",
+  "requestFramePermissions": []
+}
