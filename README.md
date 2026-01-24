@@ -18,3 +18,11 @@ View your app in AI Studio: https://ai.studio/apps/drive/1NC5sC77l2VpgxLR0F9nX-g
 2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
 3. Run the app:
    `npm run dev`
+
+
+<!-- REPO_STATS_START -->
+### 📊 Repository Status
+| Stars | Forks | Watchers | Views |
+| :---: | :---: | :---: | :---: |
+| 0 | 0 | 0 | 3 |
+<!-- REPO_STATS_END -->
