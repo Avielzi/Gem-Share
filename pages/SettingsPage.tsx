@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useGems } from '../hooks/useGems.ts';
 import { useLanguage } from '../hooks/useLanguage.ts';
 import * as geminiService from '../services/geminiService.ts';
+import { saveApiKey, hasSavedApiKey, MissingApiKeyError } from '../services/apiKey.ts';
 import type { Gem, GemCategory, GemInput } from '../types.ts';
 import { Type } from '@google/genai';
 import { Bot, HardDrive, KeyRound, Info, Loader, Download, Upload, Plus, Edit } from 'lucide-react';
@@ -19,6 +20,8 @@ const SettingsPage: React.FC = () => {
   const [generatedGem, setGeneratedGem] = useState<Omit<Gem, 'id' | 'integrity'> | null>(null);
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [gemForEditing, setGemForEditing] = useState<Gem | null>(null);
+  const [keyInput, setKeyInput] = useState('');
+  const [keySaved, setKeySaved] = useState(hasSavedApiKey());
 
   const handleExport = () => {
     if (gems.length === 0) {
@@ -124,7 +127,7 @@ const SettingsPage: React.FC = () => {
           });
       } catch (error) {
           console.error(error);
-          alert(t('errorFailedToGenerate'));
+          alert(t(error instanceof MissingApiKeyError ? 'apiKeyMissing' : 'errorFailedToGenerate'));
       } finally {
           setGenerating(false);
       }
@@ -261,9 +264,29 @@ const SettingsPage: React.FC = () => {
               <KeyRound size={24} className="text-primary mt-1"/>
               <div>
                   <h3 className="font-semibold">Google Gemini API</h3>
-                  <p className="text-sm text-muted-foreground" dangerouslySetInnerHTML={{ __html: t('apiKeyDescription').replace('<1>', '<code>').replace('</1>', '</code>') }}></p>
-                  <div className="text-xs bg-secondary p-2 rounded-md mt-2" title={t('apiKeyInfoTooltip')}>
-                    <Info size={12} className="inline-block me-1"/> {t('apiKeyInfoTooltip')}
+                  <p className="text-sm text-muted-foreground">{t('apiKeyDescription')}</p>
+                  <form
+                    className="flex flex-wrap gap-2 mt-3"
+                    onSubmit={(e) => { e.preventDefault(); saveApiKey(keyInput); setKeyInput(''); setKeySaved(hasSavedApiKey()); }}
+                  >
+                    <label htmlFor="gemini-key" className="sr-only">{t('apiKeyLabel')}</label>
+                    <input
+                      id="gemini-key"
+                      type="password"
+                      autoComplete="off"
+                      spellCheck={false}
+                      value={keyInput}
+                      onChange={(e) => setKeyInput(e.target.value)}
+                      placeholder={keySaved ? t('apiKeySavedPlaceholder') : 'AIza...'}
+                      className="flex-1 min-w-[12rem] bg-background border rounded-md px-3 py-2 text-sm"
+                    />
+                    <button type="submit" disabled={!keyInput.trim()} className="bg-primary text-primary-foreground px-4 py-2 rounded-md text-sm disabled:opacity-50">{t('apiKeySave')}</button>
+                    {keySaved && (
+                      <button type="button" onClick={() => { saveApiKey(''); setKeySaved(false); }} className="border px-4 py-2 rounded-md text-sm">{t('apiKeyRemove')}</button>
+                    )}
+                  </form>
+                  <div className="text-xs bg-secondary p-2 rounded-md mt-2">
+                    <Info size={12} className="inline-block me-1"/> {keySaved ? t('apiKeyStatusSaved') : t('apiKeyStatusNone')} {t('apiKeyInfoTooltip')}
                   </div>
               </div>
           </div>

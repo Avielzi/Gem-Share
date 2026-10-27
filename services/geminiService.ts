@@ -1,13 +1,18 @@
 import { GoogleGenAI, GenerateContentResponse } from "@google/genai";
+import { getApiKey, MissingApiKeyError } from './apiKey.ts';
 
-// Initialize the GoogleGenAI client once.
-// The API key MUST be obtained from the environment variable.
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY });
-
+// A client per key: the key can be added or changed in Settings at any time,
+// so it is read on every call instead of once when the module loads.
+let cached: { key: string; ai: GoogleGenAI } | null = null;
+function client(): GoogleGenAI {
+    const key = getApiKey();
+    if (!key) throw new MissingApiKeyError();
+    if (!cached || cached.key !== key) cached = { key, ai: new GoogleGenAI({ apiKey: key }) };
+    return cached.ai;
+}
 
 export const generateText = async (prompt: string): Promise<GenerateContentResponse> => {
-    if (!process.env.API_KEY) throw new Error("API Key is missing from environment variables.");
-    
+    const ai = client();
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -24,8 +29,7 @@ export const generateText = async (prompt: string): Promise<GenerateContentRespo
 };
 
 export const generateGemConfiguration = async (prompt: string, schema: object): Promise<GenerateContentResponse> => {
-    if (!process.env.API_KEY) throw new Error("API Key is missing from environment variables.");
-
+    const ai = client();
     try {
         const response = await ai.models.generateContent({
             model: 'gemini-2.5-flash',
@@ -43,8 +47,7 @@ export const generateGemConfiguration = async (prompt: string, schema: object): 
 };
 
 export const generateImage = async (prompt: string): Promise<string> => {
-    if (!process.env.API_KEY) throw new Error("API Key is missing from environment variables.");
-
+    const ai = client();
     try {
         const response = await ai.models.generateImages({
             model: 'imagen-4.0-generate-001',

@@ -14,6 +14,7 @@ import { Plus, Bot, Search, ArrowUpDown, Frown, ChevronDown, ChevronRight, Wand2
 import { useLanguage } from '../hooks/useLanguage.ts';
 import { Type } from '@google/genai';
 import * as geminiService from '../services/geminiService.ts';
+import { MissingApiKeyError } from '../services/apiKey.ts';
 
 const COLLAPSED_CATEGORIES_KEY = 'gem_share_collapsed_categories';
 
@@ -172,7 +173,7 @@ const HomePage: React.FC = () => {
         setIsFormOpen(true);
     } catch (error) {
         console.error("Magic Generate Error:", error);
-        alert(t('errorMagicGem'));
+        alert(t(error instanceof MissingApiKeyError ? 'apiKeyMissing' : 'errorMagicGem'));
     } finally {
         setIsGenerating(false);
         setGeneratingCategory(null);

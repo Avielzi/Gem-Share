@@ -6,6 +6,7 @@ import { ICONS, CATEGORIES } from '../constants.ts';
 import { Plus, Trash2, Lock, Unlock, Image, Shield, Wand2, Loader } from 'lucide-react';
 import Icon from './Icon.tsx';
 import * as geminiService from '../services/geminiService.ts';
+import { MissingApiKeyError } from '../services/apiKey.ts';
 
 
 interface GemFormModalProps {
@@ -110,7 +111,7 @@ ${promptText}`;
 
     } catch (error) {
       console.error("Failed to improve prompt:", error);
-      alert(t('errorImprovePrompt'));
+      alert(t(error instanceof MissingApiKeyError ? 'apiKeyMissing' : 'errorImprovePrompt'));
     } finally {
       setIsImproving(false);
     }

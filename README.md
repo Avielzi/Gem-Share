@@ -49,11 +49,10 @@
    npm install
    ```
 
-3. **Configure Environment**:
-   Create a `.env.local` file and add your Gemini API key:
-   ```env
-   GEMINI_API_KEY=your_api_key_here
-   ```
+3. **API key**:
+   Open the app, go to **Settings > API Config** and save your own Gemini API key.
+   It is kept only in your browser and sent only to Google. The key is never
+   built into the app: `vite build` fails if the output contains a Google API key.
 
 4. **Launch the app**:
    ```bash
@@ -99,7 +98,7 @@ View your app in AI Studio: https://ai.studio/apps/drive/1NC5sC77l2VpgxLR0F9nX-g
 
 1. Install dependencies:
    `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
+2. Save your Gemini API key in the app under Settings > API Config
 3. Run the app:
    `npm run dev`
 
